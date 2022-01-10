@@ -20,12 +20,25 @@ React Native app created for Branch SE Technical Assessment
 
 # Prerequisites
 
-    Android API level 30 (Play Store Activated)
+    Android API 30+ (Play Store Activated)
+    Android SDK Build-Tools 32
 
 # Installation
+    git clone git@github.com:Dylancouzon/SE_Technical_Assessment.git
+    cd SE_Technical_Assessment && npm install
 
-    cd {$repo-path} && npm install
+Open the Project in your window explorer, then go to the android directory and create a file named:
+    
+    local.propreties
+
+Open the file & link your android SDK path like below:
+
+    Windows: sdk.dir=C:\\Users\\UserName\\AppData\\Local\\Android\\sdk
+    Mac: sdk.dir = /Users/USERNAME/Library/Android/sdk
+
 
 # Start Application
+
+Run the Command:
 
     react-native run-android
