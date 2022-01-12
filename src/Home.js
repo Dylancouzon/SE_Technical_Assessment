@@ -1,3 +1,8 @@
+/*
+ * Home Component
+ * Default route
+ */
+
 import React, {Component} from 'react';
 import {View, SafeAreaView, ScrollView, Linking, Alert} from 'react-native';
 import branch, {BranchEvent} from 'react-native-branch';

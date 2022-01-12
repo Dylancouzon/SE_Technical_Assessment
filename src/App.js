@@ -1,5 +1,9 @@
+/*
+ * App Component
+ * Routes the user to the desired component
+ */
+
 import React, {Component} from 'react';
-import {View, SafeAreaView, ScrollView, Linking, Alert} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';

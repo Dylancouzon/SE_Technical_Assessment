@@ -32,7 +32,7 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
-        // react-native trying to get pull dependecies from bintray, which is down
+        // react-native trying to get pull dependecies meta-data from bintray, which is down
         // maven { 
         //     url "https://plugins.gradle.org/m2/" 
         //  }

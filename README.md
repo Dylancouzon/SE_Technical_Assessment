@@ -23,6 +23,7 @@ React Native app created for Branch SE Technical Assessment
 
     Android API 30+ (Play Store Activated)
     Android SDK Build-Tools 32
+    Node.js V16+
 
 # Installation
     git clone git@github.com:Dylancouzon/SE_Technical_Assessment.git
