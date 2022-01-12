@@ -12,6 +12,7 @@ React Native app created for Branch SE Technical Assessment
 * Create and Log custom Events
 * Retrieve & log Branch data from a deep link
 * Share Deeplink on Facebook
+* In App deep link routing
 
 
 [Direct Download](https://github.com/Dylancouzon/Branch_take_home/raw/main/SE_DYLAN_COUZON.apk)

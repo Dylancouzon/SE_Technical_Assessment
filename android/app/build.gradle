@@ -132,6 +132,7 @@ android {
 
     lintOptions {
         abortOnError false
+        checkReleaseBuilds false
     }
     defaultConfig {
         applicationId "com.se_dylan_couzon"

@@ -35,8 +35,24 @@ class ButtonGroup extends Component {
         <View style={styles.flexContainer}>
           <View style={styles.buttonStyle}>
             <Button
+              onPress={this.props.getFirstParams}
+              title="Get first Params"
+              color="#00BD70"
+            />
+          </View>
+          <View style={styles.buttonStyle}>
+            <Button
               onPress={this.props.getLatestParams}
               title="Get latest Params"
+              color="#00BD70"
+            />
+          </View>
+        </View>
+        <View style={styles.flexContainer}>
+          <View style={styles.buttonStyle}>
+            <Button
+              onPress={this.props.page2}
+              title="In-App Deep link"
               color="#00BD70"
             />
           </View>

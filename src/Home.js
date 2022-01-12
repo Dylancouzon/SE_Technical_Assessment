@@ -2,12 +2,13 @@ import React, {Component} from 'react';
 import {View, SafeAreaView, ScrollView, Linking, Alert} from 'react-native';
 import branch, {BranchEvent} from 'react-native-branch';
 import Clipboard from '@react-native-clipboard/clipboard';
-// Custom React components
-import ButtonGroup from './ButtonGroup';
-import Logs from './Logs';
-import Header from './Header';
 
-export default class App extends Component {
+// Custom React components
+import ButtonGroup from './components/ButtonGroup';
+import Logs from './components/Logs';
+import Header from './components/Header';
+
+export default class Home extends Component {
   constructor(props) {
     super(props);
 
@@ -21,12 +22,18 @@ export default class App extends Component {
   }
 
   // Creates the subscriber Once the component is rendered.
-  componentDidMount() {  
+  componentDidMount() {
     branch.subscribe(({error, params, _}) => {
       if (error) {
         console.error('Error from Branch: ' + error);
         return;
       }
+
+      if (params['+clicked_branch_link']) {
+        const branchUrl = params['targetPage'] || 'Branch App';
+        this.props.navigation.navigate(branchUrl);
+      }
+
       this.logAction('Subscriber: ', params);
       console.log(`params: ${JSON.stringify(params)}`);
     });
@@ -56,9 +63,9 @@ export default class App extends Component {
   };
 
   // Generates a Deeplink URL
-  // Will use Default link propreties if null
   // Generated link will be copied to Clipboard
-  generateShortUrl = async linkProperties => {
+  generateShortUrl = async (linkProperties, controlParams, copy = true) => {
+    //Link properties && controlParams default value
     if (!linkProperties) {
       linkProperties = {
         campaign: 'Testing',
@@ -66,15 +73,24 @@ export default class App extends Component {
         feature: 'generate link CTA',
         tags: ['android'],
         alias: '',
-        data: {},
+      };
+    }
+    if (!controlParams) {
+      controlParams = {
+        $canonical_identifier: 'canonicalIdentifier',
+        targetPage: 'In-App routing',
       };
     }
 
-    let controlParams = {};
     let {url} = await this.buo.generateShortUrl(linkProperties, controlParams);
     this.logAction('generateShortUrl:', url);
-    Clipboard.setString(url);
-    Alert.alert('Link copied to Clipboard');
+
+    // Copy the link to Clipboard
+    if (copy) {
+      Clipboard.setString(url);
+      Alert.alert('Link copied to Clipboard');
+    }
+
     return url;
   };
 
@@ -82,15 +98,19 @@ export default class App extends Component {
   createCustomEvent = async () => {
     const event = new BranchEvent('Button Click', this.buo, {
       description: 'Track custom Event button has been clicked',
-      data: {
-        $og_description: 'Track custom Event button has been clicked',
-      },
+      data: {},
     });
     event.logEvent();
     this.logAction('Custom Event:', event);
   };
 
-  // Log the last Referring parameters
+  // Logs the first Referring parameters
+  getFirstParams = async () => {
+    const params = await branch.getFirstReferringParams();
+    this.logAction('First Params', params);
+  };
+
+  // Logs the last Referring parameters
   getLatestParams = async () => {
     const params = await branch.getLatestReferringParams();
     this.logAction('Latest Params', params);
@@ -104,10 +124,25 @@ export default class App extends Component {
       feature: 'Facebook Share',
       tags: ['android'],
       alias: '',
-      data: {},
+      data: {
+        $canonical_identifier: 'canonicalIdentifier',
+        $og_title: 'SE_DYLAN_COUZON',
+        $og_description: 'Please try out my newly Branch Integrated App!',
+        $og_image_url: 'http://www.lorempixel.com/400/400/',
+        $desktop_url: 'http://www.example.com',
+      },
     };
+
+    let controlParams = {
+      $canonical_identifier: 'canonicalIdentifier',
+      targetPage: 'Branch App',
+    };
+
     let facebookParameters = [];
-    const facebookShareURL = await this.generateShortUrl(linkProperties);
+    const facebookShareURL = await this.generateShortUrl(
+      linkProperties,
+      controlParams,
+    );
     console.log('facebookShareURL', facebookShareURL);
     facebookParameters.push('u=' + encodeURI(facebookShareURL));
     const postContent = 'Please try out my newly Branch Integrated App!';
@@ -119,6 +154,37 @@ export default class App extends Component {
     Linking.openURL(url).then(data => {
       console.log('Facebook Opened', url);
     });
+  };
+
+  // shares a Deeplink
+  shareLink = async () => {
+    let shareOptions = {
+      messageHeader: 'Check this out',
+      messageBody: 'A Fully Branch integrated App',
+    };
+    let linkProperties = {feature: 'share', channel: 'RNApp'};
+    let controlParams = {
+      $desktop_url: 'http://example.com/home',
+      $ios_url: 'http://example.com/ios',
+    };
+    let {channel, completed, error} = await this.buo.showShareSheet(
+      shareOptions,
+      linkProperties,
+      controlParams,
+    );
+  };
+
+  // In App deeplink
+  goToPage2 = async () => {
+    const linkProperties = {
+      campaign: 'Testing',
+      channel: 'App',
+      feature: 'In-App Deeplink',
+      tags: ['android'],
+      alias: '',
+    };
+    const deepLink = await this.generateShortUrl(linkProperties, null, false);
+    branch.openURL(deepLink);
   };
 
   // Add actions to the State
@@ -136,13 +202,13 @@ export default class App extends Component {
       <SafeAreaView>
         <ScrollView>
           <View>
-            <Header>Branch App</Header>
-
             <ButtonGroup
               generateShortUrl={this.generateShortUrl}
               createCustomEvent={this.createCustomEvent}
               getLatestParams={this.getLatestParams}
+              getFirstParams={this.getFirstParams}
               postOnFacebook={this.postOnFacebook}
+              page2={this.goToPage2}
             />
             <Header>Logs</Header>
             <Logs logs={this.state.logs} />
